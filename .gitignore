@@ -10,4 +10,15 @@ data/*.parquet
 _site/
 .ipynb_checkpoints/
 .env
+.env.*
+!.env.example
 *.sqlite*
+*.pem
+*.key
+.ssh/
+credentials*.json
+*.log
+*.out
+*.err
+data/*
+!data/README.md

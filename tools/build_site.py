@@ -42,7 +42,7 @@ def main():
     shutil.copytree(ROOT / 'visuals', OUT / 'visuals', dirs_exist_ok=True)
     shutil.copy2(ROOT / '课程讲义.html', OUT / 'book.html')
     (OUT / '.nojekyll').write_text('')
-    print(f'Built {len(lessons)} lessons, {len(notebooks)} notebooks → {OUT}')
+    print(f'Built {len(lessons)} lessons, {len(notebooks)} notebooks → _site')
 
 if __name__ == '__main__':
     main()

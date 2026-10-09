@@ -1772,7 +1772,7 @@ def main():
     shutil.copytree(ROOT / &#x27;visuals&#x27;, OUT / &#x27;visuals&#x27;, dirs_exist_ok=True)
     shutil.copy2(ROOT / &#x27;课程讲义.html&#x27;, OUT / &#x27;book.html&#x27;)
     (OUT / &#x27;.nojekyll&#x27;).write_text(&#x27;&#x27;)
-    print(f&#x27;Built {len(lessons)} lessons, {len(notebooks)} notebooks → {OUT}&#x27;)
+    print(f&#x27;Built {len(lessons)} lessons, {len(notebooks)} notebooks → _site&#x27;)
 
 if __name__ == &#x27;__main__&#x27;:
     main()
@@ -2049,6 +2049,8 @@ if __name__==&#x27;__main__&#x27;:main()
 </code></pre>
 <p>将“你的实验”换为实际 trainer.default_local_dir，先列出实际保存目录，不凭空假设 step 已存在。如果锁定版本将导出改为保存时 hf_model，使用解析出的 checkpoint.save_contents 配置并保留原始分片。CLI 帮助和保存日志是该版本的权威接口。</p>
 <p>导出目录必须含 config、tokenizer/chat template 与模型权重。用 vLLM 加载后，对同一 dev/test 文件运行 src.native_agent。恢复则使用相同 run_id 和目录，确认 trainer.resume_mode 的实际值与恢复日志；看到 global_step 继续增加才算完成。</p></details><details class="source"><summary>configs/cluster.env.example</summary><pre><code># Copy to configs/cluster.env and edit values once. Use allocated compute nodes, never the login node.
+# Every path/address below is fictional teaching configuration, not a real server.
+# Keep actual values in ignored configs/cluster.env; never commit credentials or login details.
 # Shared absolute project directory visible at the same path on every node.
 export COURSE_ROOT=/shared/your_user/agent_systems_course
 # Environment Python; use the same environment on every node.
