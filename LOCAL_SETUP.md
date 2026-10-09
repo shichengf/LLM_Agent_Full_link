@@ -47,7 +47,7 @@ python -m http.server 8000 --bind 127.0.0.1 --directory _site
 
 仓库 Settings → Pages → Build and deployment → Source 选择 **GitHub Actions**。之后每次 main 更新，工作流自动重新构建并部署。工作流的 build 步骤通过并不等于网站部署成功，必须看到 deploy 成功。
 
-预期网址为 `https://shichengf.github.io/LLM_Agent_Full_link/`，以实际部署输出为准。此仓库是私有仓库，GitHub Pages 是否可用取决于账号套餐；不要为了部署自行更改仓库可见性。普通 Pages 网站可能公开可访问，即使源仓库私有。
+课程仓库已获授权公开，网站使用 `https://shichengf.github.io/LLM_Agent_Full_link/`。实际服务器路径、地址与登录信息只保存在本地配置中；示例文件中的路径和地址均为教学占位值。
 
 网站只发布构建出的 `_site`，不会发布 runs、集群配置或模型目录。发布内容包含课程、教学源码阅读版和 Notebook。
 
