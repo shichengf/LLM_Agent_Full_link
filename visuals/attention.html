@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>看见 Attention · LLM × Agent</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #182e35;
+        --muted: #597279;
+        --accent: #087c71;
+        --paper: #fff;
+        --line: #d7e5e3;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #f4f8f7;
+        color: var(--ink);
+        font:
+          16px/1.8 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 850px;
+        margin: auto;
+        padding: 32px 24px 64px;
+      }
+      h1 {
+        font-size: 30px;
+        line-height: 1.35;
+      }
+      h2 {
+        font-size: 21px;
+        margin-top: 36px;
+      }
+      p {
+        max-width: 70ch;
+      }
+      .eyebrow {
+        color: var(--accent);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+      }
+      .tokens {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      button {
+        font: inherit;
+        padding: 8px 14px;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        color: var(--ink);
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      button[aria-pressed="true"] {
+        background: var(--ink);
+        color: white;
+      }
+      .experiment {
+        padding: 24px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+      }
+      .rows {
+        display: grid;
+        gap: 12px;
+        margin: 24px 0;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 50px minmax(0, 1fr) 98px;
+        gap: 12px;
+        align-items: center;
+      }
+      .track {
+        height: 26px;
+        background: #edf3f1;
+      }
+      .fill {
+        height: 100%;
+        background: var(--accent);
+        transition: width 0.2s;
+      }
+      .value {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+      }
+      summary {
+        cursor: pointer;
+      }
+      code,
+      pre {
+        font-family: ui-monospace, monospace;
+      }
+      pre {
+        white-space: pre-wrap;
+        background: #eaf2ef;
+        padding: 18px;
+        border-radius: 8px;
+      }
+      a {
+        color: var(--accent);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .fill {
+          transition: none;
+        }
+      }
+      @media (max-width: 420px) {
+        main {
+          padding: 20px 12px;
+        }
+        .experiment {
+          padding: 16px;
+        }
+        .row {
+          gap: 8px;
+          grid-template-columns: 44px minmax(0, 1fr) 92px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">可操作的直觉 / 第 06 课</div>
+      <h1>一个位置，怎样读取前面的信息？</h1>
+      <p>
+        把注意力想成一次“按比例取信息”。当前的位置为每个可见位置分配一个权重，再用这些权重混合各位置携带的信息。先只观察权重：<strong
+          >点击“坐”，再点击“在”。</strong
+        >
+      </p>
+      <div class="experiment" id="experiment">
+        <div class="tokens" aria-label="选择当前位置"></div>
+        <div class="rows" role="img" aria-label="各位置的注意力权重"></div>
+        <label for="score"
+          >“猫”的匹配分数：<output id="score-value">1.2</output></label
+        >
+        <input
+          id="score"
+          type="range"
+          min="-2"
+          max="4"
+          step="0.1"
+          value="1.2"
+        />
+        <div id="status" role="status"></div>
+      </div>
+      <p class="muted">
+        这是单个注意力头的一行。为方便阅读，把每个汉字当成一个 token；真实
+        tokenizer
+        不一定这样切分。分数由我们手工指定，不是模型测量结果，也不代表词语“真正的重要性”。
+      </p>
+      <h2>先猜，再操作</h2>
+      <ol>
+        <li>选“坐”：后面的“在、垫、上”会分到多少权重？</li>
+        <li>把“猫”的分数拉高：“小”和“坐”的分数没有变，它们的权重会变吗？</li>
+        <li>选第一个“小”，再拉动滑块：看不到的“猫”能影响结果吗？</li>
+      </ol>
+      <details>
+        <summary>展开解释与答案</summary>
+        <p>
+          1. 后三个位置的权重是 0。因果 mask 阻止当前位置使用未来
+          token。训练时即使整句都在内存里，也不能偷看未来；“坐”这个位置的输出用于预测下一个
+          token。
+        </p>
+        <p>
+          2. 会变小。softmax 把可见位置的分数变成总和为 1
+          的权重；提高一个位置的分数会改变共同的分母。
+        </p>
+        <p>
+          3. 不会。只有“小”可见，因此它的权重总是
+          100%。实际实现先把未来位置的分数设为负无穷，再做 softmax；不是先
+          softmax 再直接删掉未来权重。
+        </p>
+      </details>
+      <h2>权重不是读出来的信息</h2>
+      <p>
+        Q 和 K 负责计算匹配分数，V 才是被混合的信息。假设每个位置的 V
+        暂时只有一个数字，分别为
+        1、2、3、4、5、6，下面是当前权重读出的结果。真实模型中，每个 V
+        是一个向量，每个分量都做同样的加权求和。
+      </p>
+      <pre id="mix" aria-live="polite"></pre>
+      <details>
+        <summary>现在再看公式和代码</summary>
+        <p>
+          匹配分数 sᵢ = q·kᵢ / √d。这里直接给定 s，不展示 Q/K
+          的投影。可见位置的权重 wᵢ = exp(sᵢ) / Σⱼ exp(sⱼ)，读出的向量是 Σᵢ
+          wᵢvᵢ。d 是每个头中 Q/K 的维度。
+        </p>
+        <p>
+          对应课程的 <code>src/tiny_lm.py</code> 与
+          <code>src/attention_internals.py</code>。网站的 Attention Notebook
+          用纯 Python 重现本页计算，之后再读 PyTorch 版本。
+        </p>
+      </details>
+    </main>
+    <script>
+      (() => {
+        const tokens = ["小", "猫", "坐", "在", "垫", "上"],
+          scores = [0, 1.2, 0.3, 0.7, 0.9, 0.2];
+        let position = 2;
+        const tokenBox = document.querySelector(".tokens"),
+          rows = document.querySelector(".rows");
+        tokens.forEach((t, i) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = i + 1 + " · " + t;
+          button.addEventListener("click", () => {
+            position = i;
+            draw();
+          });
+          tokenBox.appendChild(button);
+          const row = document.createElement("div");
+          row.className = "row";
+          const label = document.createElement("span");
+          label.textContent = i + 1 + " · " + t;
+          const track = document.createElement("div");
+          track.className = "track";
+          const fill = document.createElement("div");
+          fill.className = "fill";
+          track.appendChild(fill);
+          const value = document.createElement("span");
+          value.className = "value";
+          row.append(label, track, value);
+          rows.appendChild(row);
+        });
+        function draw() {
+          const denom = scores
+            .slice(0, position + 1)
+            .reduce((a, s) => a + Math.exp(s), 0);
+          const weights = scores.map((s, i) =>
+            i <= position ? Math.exp(s) / denom : 0,
+          );
+          Array.from(tokenBox.children).forEach((b, i) =>
+            b.setAttribute("aria-pressed", String(i === position)),
+          );
+          Array.from(rows.children).forEach((row, i) => {
+            row.querySelector(".fill").style.width = 100 * weights[i] + "%";
+            row.querySelector(".value").textContent =
+              i <= position ? (100 * weights[i]).toFixed(1) + "%" : "0% · 屏蔽";
+          });
+          rows.setAttribute(
+            "aria-label",
+            tokens
+              .map((t, i) => t + " " + (100 * weights[i]).toFixed(1) + "%")
+              .join("，"),
+          );
+          document.getElementById("status").textContent =
+            "当前位置：" +
+            tokens[position] +
+            " · 可见 " +
+            (position + 1) +
+            "/6 个位置 · 总权重 100%";
+          document.getElementById("score-value").textContent =
+            scores[1].toFixed(1);
+          document.getElementById("mix").textContent =
+            weights
+              .slice(0, position + 1)
+              .map((w, i) => w.toFixed(3) + " × " + (i + 1))
+              .join(" + ") +
+            " ≈ " +
+            weights.reduce((a, w, i) => a + w * (i + 1), 0).toFixed(3);
+        }
+        document.getElementById("score").addEventListener("input", (e) => {
+          scores[1] = Number(e.target.value);
+          draw();
+        });
+        draw();
+      })();
+    </script>
+  </body>
+</html>

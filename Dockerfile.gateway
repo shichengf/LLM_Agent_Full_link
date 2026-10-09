@@ -1,0 +1,7 @@
+FROM python:3.11-slim
+WORKDIR /course
+COPY src ./src
+COPY data ./data
+RUN mkdir -p runs
+EXPOSE 8080
+CMD ["python", "-m", "src.gateway", "--host", "0.0.0.0", "--backend", "oracle"]

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="从 Python 到多节点 LLM 与 Agent：中文实践课程、交互式直觉与浏览器 Python 实验。"
+    />
+    <title>LLM × Agent · 从直觉到集群</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <aside id="sidebar">
+      <a class="brand" href="#home">LLM <span>×</span> Agent</a>
+      <div class="brand-caption">从直觉到集群</div>
+      <button
+        id="menu"
+        class="mobile-menu"
+        aria-expanded="false"
+        aria-controls="navigation"
+      >
+        课程目录
+      </button>
+      <nav id="navigation" aria-label="课程导航">
+        <a href="#home">课程首页</a
+        ><a href="#attention">看见 Attention <span class="pill">交互</span></a
+        ><a href="#lab-01">Python 实验室 <span class="pill">可运行</span></a>
+        <label class="search-label" for="search">查找课程</label
+        ><input
+          id="search"
+          type="search"
+          placeholder="例如 KV cache、部署"
+          autocomplete="off"
+        />
+        <div id="lessons"></div>
+        <a href="https://github.com/shichengf/LLM_Agent_Full_link"
+          >GitHub 仓库 ↗</a
+        >
+      </nav>
+    </aside>
+    <main>
+      <header>
+        <span id="breadcrumb">课程首页</span
+        ><span class="header-note">中文 · 动手实验 · 32 课</span>
+      </header>
+      <div id="content" aria-live="polite"><p>正在加载课程…</p></div>
+      <footer>先预测，再运行。用实验结果检验你的理解。</footer>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

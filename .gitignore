@@ -1,0 +1,13 @@
+.venv*/
+__pycache__/
+*.pyc
+models/
+runs/*
+!runs/.gitkeep
+configs/cluster.env
+data/*.jsonl
+data/*.parquet
+_site/
+.ipynb_checkpoints/
+.env
+*.sqlite*

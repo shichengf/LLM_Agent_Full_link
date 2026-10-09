@@ -1,5 +1,7 @@
 # 多节点 LLM 与 Agent 实践课程
 
+本仓库也是交互课程网站的源代码。网站包括 32 课导航、Attention 可视化、3 份可编辑运行的入门 Notebook，以及下载到 VS Code 的入口。GitHub Pages 部署状态见仓库 Actions；首次启用和本地使用步骤见 [LOCAL_SETUP.md](LOCAL_SETUP.md)。
+
 从 [COURSE.md](COURSE.md) 开始，或下载仓库后用浏览器打开 `课程讲义.html`。讲义包含 32 课正文及主要源码和答案，离线可读。
 
 **交互式入门：** 用浏览器打开 [visuals/attention.html](visuals/attention.html)，先点击 token，看清“只能看到过去和当前位置”，再进入第 06 课。GitHub 文件页面展示源码；克隆后双击 HTML 才能操作。
@@ -17,7 +19,7 @@ python3 -m unittest discover -s tests -v
 
 后续更新在仓库目录运行 `git pull --ff-only`；有自己的修改时，先提交到个人练习分支。私有仓库克隆需要你已有的 GitHub 登录方式。
 
-课程源文件、练习和集群脚本以本仓库为准；HTML 是阅读版本，ZIP 只用作阶段快照。当前交互内容只有 attention 入门，其余章节仍以文字、代码和实验为主。可视化的讲解标准见 [TEACHING.md](TEACHING.md)。
+课程源文件、练习和集群脚本以本仓库为准；HTML 是阅读版本，ZIP 只用作阶段快照。当前可视化只有 attention 入门；网页 Python 实验覆盖第 01、02、06 课，其余章节仍以文字、代码和实验为主。可视化的讲解标准见 [TEACHING.md](TEACHING.md)。
 
 修改讲义后重新生成 HTML：
 
